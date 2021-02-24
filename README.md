@@ -5,6 +5,7 @@ A quick and minimal project starter kit for Three.js projects with Vite as the b
 ## Demo
 
 <img src="https://github.com/nrednav/three-snowpack-starter/raw/master/demo.gif" width="320" height="240" />
+
 [https://three-vite-starter.vercel.app](https://three-vite-starter.vercel.app)
 
 ## Features
