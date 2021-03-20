@@ -2,7 +2,7 @@
   "name": "three-vite-starter",
   "version": "0.0.0",
   "description": "A quick and minimal project starter-kit for Three.js projects with vite as the build tool.",
-	"license": "MIT",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
@@ -12,7 +12,8 @@
     "vite": "^2.0.1"
   },
   "dependencies": {
-    "dat.gui": "^0.7.7",
-    "three": "^0.125.2"
+    "stats.js": "^0.17.0",
+    "three": "^0.125.2",
+    "tweakpane": "^2.1.1"
   }
 }

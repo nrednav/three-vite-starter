@@ -1,13 +1,22 @@
-import * as THREE from 'three';
-import * as dat from 'dat.gui';
+import * as THREE from "three";
+import Tweakpane from "tweakpane";
+import Stats from "stats.js";
 
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 
 // Debug
-const gui = new dat.GUI();
+const debugPane = new Tweakpane({ title: "Debug" });
 const debugParams = {
-  color: '#87ceeb',
+  cube: {
+    scale: 1.0,
+    color: "#87ceeb",
+  },
 };
+
+// Stats
+const stats = new Stats();
+stats.showPanel(0);
+document.body.appendChild(stats.dom);
 
 // Config
 const sizes = {
@@ -16,7 +25,7 @@ const sizes = {
 };
 
 // Canvas & Renderer
-const canvas = document.querySelector('#webgl');
+const canvas = document.querySelector("#webgl");
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
   antialias: true,
@@ -25,7 +34,7 @@ renderer.setSize(sizes.width, sizes.height);
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
 // Handle window resizing
-window.addEventListener('resize', () => {
+window.addEventListener("resize", () => {
   // Update dimensions
   sizes.width = window.innerWidth;
   sizes.height = window.innerHeight;
@@ -43,11 +52,11 @@ window.addEventListener('resize', () => {
 const scene = new THREE.Scene();
 
 // Lighting
-const light = new THREE.DirectionalLight('#ffffff');
+const light = new THREE.DirectionalLight("#ffffff");
 light.position.set(0, 5, 5);
 scene.add(light);
 
-const ambientLight = new THREE.AmbientLight('#ffffff', 0.25);
+const ambientLight = new THREE.AmbientLight("#ffffff", 0.25);
 scene.add(ambientLight);
 
 // Camera
@@ -66,22 +75,23 @@ orbitControls.enableDamping = true;
 
 // Object
 const geometry = new THREE.BoxGeometry(1, 1, 1);
-const material = new THREE.MeshPhongMaterial({ color: debugParams.color });
+const material = new THREE.MeshPhongMaterial({ color: debugParams.cube.color });
 const mesh = new THREE.Mesh(geometry, material);
 scene.add(mesh);
 
 // Object Debug
-gui.add(mesh.scale, 'x').min(1).max(3).step(0.01).name('scaleX');
-gui.add(mesh.scale, 'y').min(1).max(3).step(0.01).name('scaleY');
-gui.add(mesh.scale, 'z').min(1).max(3).step(0.01).name('scaleZ');
-gui.addColor(debugParams, 'color').onChange(() => {
-  material.color.set(debugParams.color);
-});
+let cubeFolder = debugPane.addFolder({ title: "Cube" });
+cubeFolder
+  .addInput(debugParams.cube, "scale", { min: 0.5, max: 2.0 })
+  .on("change", (ev) => mesh.scale.set(ev.value, ev.value, ev.value));
+cubeFolder
+  .addInput(debugParams.cube, "color")
+  .on("change", (ev) => (mesh.material.color = new THREE.Color(ev.value)));
 
 // Render & Animation
 const clock = new THREE.Clock();
 const render = () => {
-  requestAnimationFrame(render);
+  stats.begin();
 
   // Animation logic
   const elapsedTime = clock.getElapsedTime();
@@ -89,6 +99,10 @@ const render = () => {
 
   orbitControls.update();
   renderer.render(scene, camera);
+
+  stats.end();
+
+  requestAnimationFrame(render);
 };
 
 requestAnimationFrame(render);
